@@ -13,9 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Unserakus">
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false" />
+        <activity android:name=".activities.CreateThreadActivity" />
+        <activity android:name=".activities.EditProfileActivity" />
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.ThreadDetailActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -34,7 +34,7 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/name"
+                android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName" />
@@ -51,7 +51,7 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/username"
+                android:id="@+id/etUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
               />
@@ -69,7 +69,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:id="@+id/password"
+                android:id="@+id/etPassword"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
 
@@ -87,6 +87,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/etConfirmPassword"
                 android:inputType="textPassword" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -102,7 +103,7 @@
 
         <!-- Tombol Register -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_register"
+            android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Daftar"

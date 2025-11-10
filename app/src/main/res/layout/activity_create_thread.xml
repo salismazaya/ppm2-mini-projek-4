@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Buat Thread Baru"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/etThreadText"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:hint="Apa yang kamu pikirkan?"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:background="@android:drawable/editbox_background"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/btnPostThread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Post"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>
