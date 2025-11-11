@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class ApiService {
 
-    private static final String BASE_URL = "https://e95aebca7b34.ngrok-free.app/api";
+    private static final String BASE_URL = "https://ppm2-mini-projek-backend.onrender.com/api";
     private final RequestQueue requestQueue;
     private final String authToken;
 
