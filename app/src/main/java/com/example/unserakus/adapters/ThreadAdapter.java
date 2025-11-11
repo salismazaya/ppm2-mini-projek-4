@@ -20,16 +20,20 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
 
     private List<Thread> threadList;
     private OnThreadActionsListener listener;
+    private int loggedInUserId; // BARU
 
-    // Interface untuk menangani klik
+    // Interface DIUBAH
     public interface OnThreadActionsListener {
         void onLikeClick(int position, Thread thread);
         void onCommentClick(Thread thread);
+        void onDeleteClick(Thread thread, int position); // BARU
     }
 
-    public ThreadAdapter(List<Thread> threadList, OnThreadActionsListener listener) {
+    // Constructor DIUBAH
+    public ThreadAdapter(List<Thread> threadList, OnThreadActionsListener listener, int loggedInUserId) {
         this.threadList = threadList;
         this.listener = listener;
+        this.loggedInUserId = loggedInUserId;
     }
 
     @NonNull
@@ -43,7 +47,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
     public void onBindViewHolder(@NonNull ThreadViewHolder holder, int position) {
         Thread thread = threadList.get(position);
 
-        // Set data
         User owner = thread.getOwner();
         if (owner != null) {
             String name = owner.getFirstName() + " " + owner.getLastName();
@@ -57,12 +60,23 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
 
         // Set status 'Like'
         if (thread.isLiked()) {
-            holder.btnLike.setImageResource(R.drawable.ic_like_filled); // Buat drawable 'filled'
+            holder.btnLike.setImageResource(R.drawable.ic_like_filled);
             holder.btnLike.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_light));
         } else {
             holder.btnLike.setImageResource(R.drawable.ic_like_outline);
             holder.btnLike.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.darker_gray));
         }
+
+
+        if (loggedInUserId == thread.getOwner().getId()) {
+            holder.btnDeleteThread.setVisibility(View.VISIBLE);
+            holder.btnDeleteThread.setOnClickListener(v -> {
+                listener.onDeleteClick(thread, holder.getAdapterPosition());
+            });
+        } else {
+            holder.btnDeleteThread.setVisibility(View.GONE);
+        }
+
 
         // Set Listeners
         holder.btnLike.setOnClickListener(v -> {
@@ -73,7 +87,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
             listener.onCommentClick(thread);
         });
 
-        // Klik pada item juga membuka detail
         holder.itemView.setOnClickListener(v -> {
             listener.onCommentClick(thread);
         });
@@ -84,10 +97,10 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         return threadList.size();
     }
 
-    // ViewHolder
+    // ViewHolder DIUBAH
     static class ThreadViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvUsername, tvThreadText, tvLikeCount, tvCommentCount;
-        ImageButton btnLike, btnComment;
+        ImageButton btnLike, btnComment, btnDeleteThread; // BARU
 
         public ThreadViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -98,6 +111,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
             tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
             btnLike = itemView.findViewById(R.id.btnLike);
             btnComment = itemView.findViewById(R.id.btnComment);
+            btnDeleteThread = itemView.findViewById(R.id.btnDeleteThread); // BARU
         }
     }
 }

@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.unserakus.R;
+import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.activities.EditProfileActivity;
 import com.example.unserakus.activities.LoginActivity;
 import com.example.unserakus.api.ApiService;
@@ -21,13 +22,12 @@ import com.example.unserakus.api.models.ApiError;
 import com.example.unserakus.api.models.User;
 import com.example.unserakus.storages.Prefences;
 
-import java.util.Objects;
-
 public class ProfileFragment extends Fragment {
 
     TextView tvName, tvUsername;
     Button btnEditProfile, btnLogout;
     Prefences prefences;
+
 
     @Nullable
     @Override
@@ -39,8 +39,7 @@ public class ProfileFragment extends Fragment {
         btnEditProfile = v.findViewById(R.id.btnEditProfile);
         btnLogout = v.findViewById(R.id.btnLogout);
 
-        prefences = new Prefences(getActivity());
-        String token = prefences.getToken();
+        String token = SharedPreferencesHelper.getToken(getContext());
 
         ApiService apiService = new ApiService(requireContext(), token);
 
@@ -62,13 +61,18 @@ public class ProfileFragment extends Fragment {
             startActivity(new Intent(getContext(), EditProfileActivity.class));
         });
 
-        btnLogout.setOnClickListener(view -> {
-            prefences.setToken(null);
 
+        btnLogout.setOnClickListener(view -> {
+            SharedPreferencesHelper.clear(getContext());
+//            prefences.setToken(null);
+
+            // 2. Pindah ke LoginActivity
             Intent intent = new Intent(getContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            getActivity().finish();
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
         });
 
         return v;

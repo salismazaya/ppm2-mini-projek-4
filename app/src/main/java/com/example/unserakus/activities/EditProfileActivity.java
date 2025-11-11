@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.unserakus.R;
+import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.api.models.ApiError;
 import com.example.unserakus.api.ApiService;
 import com.example.unserakus.api.models.User; // Pastikan Anda mengimpor model User
@@ -27,8 +28,7 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        Prefences prefences = new Prefences(this);
-        String token = prefences.getToken();
+        String token = SharedPreferencesHelper.getToken(getApplicationContext());
         apiService = new ApiService(this, token);
 
         // Inisialisasi View yang sudah direvisi

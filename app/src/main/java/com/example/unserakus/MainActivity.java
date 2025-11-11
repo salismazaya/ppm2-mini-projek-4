@@ -23,9 +23,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navListener);
 
-
-        Prefences prefences = new Prefences(this);
-        String token = prefences.getToken();
+        String token = SharedPreferencesHelper.getToken(getApplicationContext());
 
         Log.d("MAIN_ACTIVITY", "Token " + token);
 

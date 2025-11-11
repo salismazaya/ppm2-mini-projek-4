@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.unserakus.R;
+import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.api.models.ApiError;
 import com.example.unserakus.api.ApiService;
 import com.example.unserakus.api.models.Thread;
@@ -27,8 +28,7 @@ public class CreateThreadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_thread);
 
 
-        Prefences prefences = new Prefences(CreateThreadActivity.this);
-        String token = prefences.getToken();
+        String token = SharedPreferencesHelper.getToken(getApplicationContext());
 
         apiService = new ApiService(this, token);
 

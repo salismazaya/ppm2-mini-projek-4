@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.unserakus.R;
+import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.activities.CreateThreadActivity;
 import com.example.unserakus.activities.ThreadDetailActivity;
 import com.example.unserakus.adapters.ThreadAdapter;
@@ -43,19 +45,28 @@ public class HomeFragment extends Fragment {
     List<Thread> threadList = new ArrayList<>();
     ApiService apiService;
 
+    private int loggedInUserId; // BARU
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Prefences prefences = new Prefences(getActivity());
-        String token = prefences.getToken();
+        // Ambil token dari SharedPreferencesHelper
+        String token = SharedPreferencesHelper.getToken(getContext());
+        if (token == null) {
+            return v;
+        }
         apiService = new ApiService(getContext(), token);
 
-        // Setup Toolbar
+        // Ambil ID user yang login
+        loggedInUserId = SharedPreferencesHelper.getLoggedInUserId(getContext());
+
         toolbar = v.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        setHasOptionsMenu(true); // Memberitahu fragment ini punya menu
+
+        // Baris ini PENTING untuk menampilkan menu
+        setHasOptionsMenu(true);
 
         rvThreads = v.findViewById(R.id.rvThreads);
         fabCreateThread = v.findViewById(R.id.fabCreateThread);
@@ -63,11 +74,64 @@ public class HomeFragment extends Fragment {
         setupRecyclerView();
 
         fabCreateThread.setOnClickListener(view -> {
-            // TODO: Event klik FAB
             startActivity(new Intent(getContext(), CreateThreadActivity.class));
         });
 
         return v;
+    }
+
+    private void handleDeleteThread(Thread thread, int position) {
+        // TODO: Tampilkan loading
+
+        apiService.deleteThread(thread.getId(), new ApiService.ApiSuccessListener() {
+            @Override
+            public void onSuccess() {
+                // TODO: Sembunyikan loading
+                Toast.makeText(getContext(), "Thread dihapus", Toast.LENGTH_SHORT).show();
+                // Hapus item dari list dan update adapter
+                threadList.remove(position);
+                threadAdapter.notifyItemRemoved(position);
+            }
+
+            @Override
+            public void onError(ApiError error) {
+                // TODO: Sembunyikan loading
+                Toast.makeText(getContext(), "Gagal menghapus: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupRecyclerView() {
+        // Constructor adapter DIUBAH
+        threadAdapter = new ThreadAdapter(threadList, new ThreadAdapter.OnThreadActionsListener() {
+            @Override
+            public void onLikeClick(int position, Thread thread) {
+                handleLikeClick(position, thread);
+            }
+
+            @Override
+            public void onCommentClick(Thread thread) {
+                Intent intent = new Intent(getContext(), ThreadDetailActivity.class);
+                intent.putExtra(ThreadDetailActivity.EXTRA_THREAD_ID, thread.getId());
+                startActivity(intent);
+            }
+
+            // --- Implementasi Hapus (BARU) ---
+            @Override
+            public void onDeleteClick(Thread thread, int position) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Hapus Thread")
+                        .setMessage("Apakah Anda yakin ingin menghapus thread ini?")
+                        .setPositiveButton("Hapus", (dialog, which) -> {
+                            handleDeleteThread(thread, position);
+                        })
+                        .setNegativeButton("Batal", null)
+                        .show();
+            }
+        }, loggedInUserId); // <-- Pass ID user ke adapter
+
+        rvThreads.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvThreads.setAdapter(threadAdapter);
     }
 
     @Override
@@ -75,26 +139,6 @@ public class HomeFragment extends Fragment {
         super.onResume();
         // Load atau refresh thread setiap kali fragment ini ditampilkan
         loadThreads("terbaru"); // Default sort
-    }
-
-    private void setupRecyclerView() {
-        threadAdapter = new ThreadAdapter(threadList, new ThreadAdapter.OnThreadActionsListener() {
-            @Override
-            public void onLikeClick(int position, Thread thread) {
-                // TODO: Event klik tombol like
-                handleLikeClick(position, thread);
-            }
-
-            @Override
-            public void onCommentClick(Thread thread) {
-                // TODO: Event klik tombol komentar
-                Intent intent = new Intent(getContext(), ThreadDetailActivity.class);
-                intent.putExtra(ThreadDetailActivity.EXTRA_THREAD_ID, thread.getId());
-                startActivity(intent);
-            }
-        });
-        rvThreads.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvThreads.setAdapter(threadAdapter);
     }
 
     private void loadThreads(String sortBy) {

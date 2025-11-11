@@ -3,6 +3,7 @@ package com.example.unserakus.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,10 +16,25 @@ import com.example.unserakus.api.models.User;
 import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
+
     private List<CommentMinimal> commentList;
 
-    public CommentAdapter(List<CommentMinimal> commentList) {
+    // --- Bagian Baru ---
+    private int loggedInUserId;
+    private int threadOwnerId;
+    private OnCommentActionsListener listener;
+
+    public interface OnCommentActionsListener {
+        void onDeleteClick(CommentMinimal comment, int position);
+    }
+    // --- Akhir Bagian Baru ---
+
+    // Constructor DIUBAH
+    public CommentAdapter(List<CommentMinimal> commentList, int loggedInUserId, int threadOwnerId, OnCommentActionsListener listener) {
         this.commentList = commentList;
+        this.loggedInUserId = loggedInUserId;
+        this.threadOwnerId = threadOwnerId;
+        this.listener = listener;
     }
 
     @NonNull
@@ -33,7 +49,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         CommentMinimal comment = commentList.get(position);
 
         User user = comment.getUser();
-
         if (user != null) {
             String name = user.getFirstName() + " " + user.getLastName();
             holder.tvName.setText(name.trim());
@@ -41,6 +56,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
 
         holder.tvCommentText.setText(comment.getText());
+
+        // --- LOGIKA HAPUS (BARU) ---
+        // Tampilkan jika:
+        // 1. User yang login adalah PEMILIK KOMENTAR
+        // ATAU
+        // 2. User yang login adalah PEMILIK THREAD
+        if (loggedInUserId == user.getId() || loggedInUserId == threadOwnerId) {
+            holder.btnDeleteComment.setVisibility(View.VISIBLE);
+            holder.btnDeleteComment.setOnClickListener(v -> {
+                listener.onDeleteClick(comment, holder.getAdapterPosition());
+            });
+        } else {
+            holder.btnDeleteComment.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -48,15 +77,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         return commentList.size();
     }
 
-    // ViewHolder
+    // ViewHolder DIUBAH
     static class CommentViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvUsername, tvCommentText;
+        ImageButton btnDeleteComment; // BARU
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             tvUsername = itemView.findViewById(R.id.tvUsername);
             tvCommentText = itemView.findViewById(R.id.tvCommentText);
+            btnDeleteComment = itemView.findViewById(R.id.btnDeleteComment); // BARU
         }
     }
 }
