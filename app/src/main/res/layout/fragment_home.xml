@@ -13,8 +13,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="83dp"
-            android:background="#0511FF66"
-            app:contentInsetStartWithNavigation="0">
+            android:background="#0511FF66">
 
             <!-- Gambar logo di tengah -->
             <ImageView
