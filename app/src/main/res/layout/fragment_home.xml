@@ -8,14 +8,27 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:title="TalkMate"
-            app:titleTextColor="@android:color/white" />
+            android:layout_height="83dp"
+            android:background="#0511FF66">
+
+            <!-- Gambar logo di tengah -->
+            <ImageView
+                android:id="@+id/imgToolbarLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/talkmate_logo"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:contentDescription="TalkMate Logo"
+                android:layout_margin="8dp" />
+        </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvThreads"
@@ -31,8 +44,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        app:tint="@android:color/white"
+        android:src="@drawable/ic_feather_add"
+        app:tint="@color/white"
+        app:backgroundTint="#641FFD"
+
         android:contentDescription="Buat Thread Baru" />
 
 </RelativeLayout>
