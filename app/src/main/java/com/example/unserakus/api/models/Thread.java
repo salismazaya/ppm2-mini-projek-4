@@ -1,9 +1,8 @@
 package com.example.unserakus.api.models;
 
 
-import static com.example.unserakus.api.ApiService.BASE_URL;
-
 import com.google.gson.annotations.SerializedName;
+import com.example.unserakus.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +30,15 @@ public class Thread {
     private boolean liked;
 
     @SerializedName("created_at")
-    private String created_at;
+    private String createdAt;
 
     @SerializedName("title")
     private String title;
 
-    @SerializedName("media_id")
-    private String media_id;
+
+    @SerializedName("file")
+    private String file;
+
 
     // Getter
     public int getId() { return id; }
@@ -54,18 +55,21 @@ public class Thread {
     public int getCommentsCount() { return commentsCount; }
     public boolean isLiked() { return liked; }
 
-    public String getCreatedAt() {
-        return created_at;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public String getMediaUrl() {
-        if (media_id == null) {
-            return null;
-        }
-        return BASE_URL + "/file?id=" + media_id;
+    public String getFile() {
+        return file;
     }
+
+    public String createdAtTimeAgo() {
+        try {
+            return Helpers.toTimeAgo(createdAt);
+        } catch (UnsupportedClassVersionError e) {
+            return "Date Parsing Error";
+        }
+    }
+
+
 }

@@ -1,7 +1,7 @@
 package com.example.unserakus.api.models;
 
-import static com.example.unserakus.api.ApiService.BASE_URL;
 
+import com.example.unserakus.Helpers;
 import com.google.gson.annotations.SerializedName;
 
 public class Comment {
@@ -18,21 +18,26 @@ public class Comment {
     private String text;
 
     @SerializedName("created_at")
-    private String created_at;
+    private String createdAt;
 
-    @SerializedName("media_id")
-    private String media_id;
+    @SerializedName("file")
+    private String file;
 
-    // Getter
+    public String getFile() {
+        return file;
+    }
+
     public int getId() { return id; }
     public User getUser() { return user; }
     public int getThread() { return thread; }
     public String getText() { return text; }
 
-    public String getMediaUrl() {
-        if (media_id == null) {
-            return null;
+    public String createdAtTimeAgo() {
+        try {
+            return Helpers.toTimeAgo(createdAt);
+        } catch (UnsupportedClassVersionError e) {
+            return "Date Parsing Error";
         }
-        return BASE_URL + "/file?id=" + media_id;
     }
+
 }

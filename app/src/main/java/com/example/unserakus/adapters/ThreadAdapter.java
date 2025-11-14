@@ -58,7 +58,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         holder.tvLikeCount.setText(String.valueOf(thread.getLikesCount()));
         holder.tvCommentCount.setText(String.valueOf(thread.getCommentsCount()));
 
-        // Set status 'Like'
         if (thread.isLiked()) {
             holder.btnLike.setImageResource(R.drawable.ic_like_filled);
             holder.btnLike.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_light));
@@ -78,7 +77,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         }
 
 
-        // Set Listeners
         holder.btnLike.setOnClickListener(v -> {
             listener.onLikeClick(holder.getAdapterPosition(), thread);
         });
