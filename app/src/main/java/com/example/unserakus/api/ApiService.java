@@ -7,7 +7,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response; // DIUBAH: Import ini mungkin diperlukan
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
@@ -18,7 +18,7 @@ import com.google.gson.reflect.TypeToken;
 
 import com.example.unserakus.api.models.Comment;
 import com.example.unserakus.api.models.Like;
-import com.example.unserakus.api.models.LoginResponse; // Diperlukan dari revisi sebelumnya
+import com.example.unserakus.api.models.LoginResponse;
 
 import com.example.unserakus.api.models.Thread;
 import com.example.unserakus.api.models.User;
@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class ApiService {
 
-    public static final String BASE_URL = "https://6508b87ce1aa.ngrok-free.app/api";
+    public static final String BASE_URL = "https://talkmate.presensee.my.id/api";
     private final RequestQueue requestQueue;
     private final String authToken;
     private static final int DEFAULT_TIMEOUT_MS = 10000;
@@ -467,6 +467,47 @@ public class ApiService {
 //        requestQueue.add(multipartRequest);
         addRequestWithDefaultPolicy(multipartRequest);
 
+    }
+    public void updateProfilePicture(byte[] fileData, final ApiResponseListener<User> listener) {
+        String url = BASE_URL + "/user/";
+
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.PUT, url,
+                response -> {
+                    // Sukses: Parse JSON response manual
+                    try {
+                        String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        User user = new Gson().fromJson(jsonString, User.class);
+                        listener.onSuccess(user);
+                    } catch (Exception e) {
+                        listener.onError(new ApiError(new VolleyError(e)));
+                    }
+                },
+                error -> listener.onError(new ApiError(error))) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getAuthHeaders();
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Karena ini hanya untuk gambar, field text diabaikan
+                return null;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                if (fileData != null) {
+                    // PENTING: Nama field harus 'profile_picture' sesuai serializer Anda
+                    params.put("profile_picture", new DataPart("profile.jpg", fileData, "image/jpeg"));
+                }
+                return params;
+            }
+        };
+
+        // Terapkan Retry Policy default
+        addRequestWithDefaultPolicy(multipartRequest);
     }
 
 }
