@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unserakus.LoadingAlert;
 import com.example.unserakus.R;
 import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.api.models.ApiError;
@@ -20,11 +21,15 @@ public class EditProfileActivity extends AppCompatActivity {
     EditText etFirstName, etLastName, etUsername;
     Button btnSaveProfile;
     ApiService apiService;
+    LoadingAlert loadingAlert;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+
+        loadingAlert = new LoadingAlert(this);
 
         String token = SharedPreferencesHelper.getToken(getApplicationContext());
         apiService = new ApiService(this, token);
@@ -45,20 +50,21 @@ public class EditProfileActivity extends AppCompatActivity {
      * Memanggil GET /api/user/ untuk mengisi field
      */
     private void loadCurrentUserData() {
-        // TODO: Tampilkan loading
+        loadingAlert.startLoading();
 
         apiService.getCurrentUser(new ApiService.ApiResponseListener<User>() {
             @Override
             public void onSuccess(User user) {
-                // TODO: Sembunyikan loading
                 etFirstName.setText(user.getFirstName());
                 etLastName.setText(user.getLastName());
                 etUsername.setText(user.getUsername());
+                loadingAlert.dismissDialog();
             }
 
             @Override
             public void onError(ApiError error) {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
+
                 Log.e("EditProfile", "Gagal load user: " + error.getDetailMessage());
                 Toast.makeText(EditProfileActivity.this, "Gagal memuat data", Toast.LENGTH_SHORT).show();
             }
@@ -78,13 +84,13 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Tampilkan loading
+       loadingAlert.startLoading();
         btnSaveProfile.setEnabled(false); // Nonaktifkan tombol sementara
 
         apiService.updateUser(firstName, lastName, username, new ApiService.ApiResponseListener<User>() {
             @Override
             public void onSuccess(User updatedUser) {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
                 btnSaveProfile.setEnabled(true);
                 Toast.makeText(EditProfileActivity.this, "Profile berhasil diperbarui", Toast.LENGTH_SHORT).show();
 
@@ -96,7 +102,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
             @Override
             public void onError(ApiError error) {
-                // TODO: Sembunyikan loading
+               loadingAlert.dismissDialog();
                 btnSaveProfile.setEnabled(true);
                 Log.e("EditProfile", "Gagal update user: " + error.getDetailMessage());
                 Toast.makeText(EditProfileActivity.this, "Gagal: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();

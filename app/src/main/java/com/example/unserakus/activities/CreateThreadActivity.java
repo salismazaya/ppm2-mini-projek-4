@@ -16,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unserakus.LoadingAlert;
 import com.example.unserakus.R;
 import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.api.models.ApiError;
@@ -35,11 +36,15 @@ public class CreateThreadActivity extends AppCompatActivity {
     Button btnPickImage;
     private byte[] selectedImageData = null;
     ActivityResultLauncher<Intent> imagePickerLauncher;
+    LoadingAlert loadingAlert;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_thread);
+
+        loadingAlert = new LoadingAlert(this);
 
         String token = SharedPreferencesHelper.getToken(getApplicationContext());
 
