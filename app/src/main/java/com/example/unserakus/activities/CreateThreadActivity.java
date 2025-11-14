@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unserakus.LoadingAlert;
 import com.example.unserakus.R;
 import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.api.models.ApiError;
@@ -21,12 +22,15 @@ public class CreateThreadActivity extends AppCompatActivity {
     EditText etThreadText;
     Button btnPostThread;
     ApiService apiService;
+    LoadingAlert loadingAlert;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_thread);
 
+        loadingAlert = new LoadingAlert(this);
 
         String token = SharedPreferencesHelper.getToken(getApplicationContext());
 
@@ -46,20 +50,23 @@ public class CreateThreadActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Tampilkan loading
+        loadingAlert.startLoading();
 
         apiService.createThread(text, new ApiService.ApiResponseListener<Thread>() {
             @Override
             public void onSuccess(Thread response) {
-                // TODO: Sembunyikan loading
                 Log.d("CREATE_THREAD", "Thread berhasil dibuat");
                 Toast.makeText(CreateThreadActivity.this, "Thread diposting!", Toast.LENGTH_SHORT).show();
+
+                loadingAlert.dismissDialog();
+
                 finish(); // Tutup activity dan kembali ke Home
             }
 
             @Override
             public void onError(ApiError error) {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
+
                 Log.e("CREATE_THREAD", "Error: " + error.getDetailMessage());
                 Toast.makeText(CreateThreadActivity.this, "Gagal: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();
             }

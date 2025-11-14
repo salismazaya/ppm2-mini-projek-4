@@ -15,6 +15,7 @@
         android:gravity="center"
         android:paddingTop="40dp">
 
+
         <!-- Logo TalkMate -->
         <ImageView
             android:id="@+id/imgIllustration"
@@ -80,7 +81,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_user"
-                    android:tint="#641FFD" />
+                    app:tint="#641FFD" />
 
                 <EditText
                     android:id="@+id/etUsername"
@@ -96,10 +97,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginBottom="24dp"
                 android:background="@drawable/edittext_background"
-                android:padding="8dp"
-                android:layout_marginBottom="24dp">
+                android:orientation="horizontal"
+                android:padding="8dp">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -142,4 +143,12 @@
         android:layout_marginTop="16dp"
         android:text="Belum punya akun? Yuk, daftar sekarang!"
         android:textColor="#641FFD" />
+
+
+    <ProgressBar
+        android:id="@+id/loadingSpinner"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
 </RelativeLayout>

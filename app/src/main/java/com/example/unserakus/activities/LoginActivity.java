@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unserakus.LoadingAlert;
 import com.example.unserakus.MainActivity;
 import com.example.unserakus.R;
 import com.example.unserakus.SharedPreferencesHelper;
@@ -27,11 +28,14 @@ public class LoginActivity extends AppCompatActivity {
 
     // Ganti 'null' dengan token jika Anda menyimpannya
     ApiService apiService;
+    LoadingAlert loadingAlert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        loadingAlert = new LoadingAlert(LoginActivity.this);
 
         // Inisialisasi ApiService tanpa token
         apiService = new ApiService(this, "");
@@ -59,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Tampilkan loading indicator
+        loadingAlert.startLoading();
 
         apiService.login(username, password, new ApiService.ApiResponseListener<LoginResponse>() {
             @Override
@@ -68,6 +72,8 @@ public class LoginActivity extends AppCompatActivity {
                 String token = response.getToken();
                 SharedPreferencesHelper.saveToken(LoginActivity.this, token);
                 Log.d("LOGIN_SUCCESS", "Token disimpan: " + token);
+
+                loadingAlert.dismissDialog();
 
                 // 2. Sekarang, ambil data user menggunakan token baru
                 fetchAndSaveUser(token);
@@ -78,6 +84,9 @@ public class LoginActivity extends AppCompatActivity {
                 // TODO: Sembunyikan loading indicator
                 String errorMessage = error.getDetailMessage();
                 Log.e("LOGIN_ERROR", "Error: " + errorMessage);
+
+                loadingAlert.dismissDialog();
+
                 Toast.makeText(LoginActivity.this, "Login Gagal: " + errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
