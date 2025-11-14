@@ -18,8 +18,6 @@ import com.example.unserakus.api.models.User; // Pastikan Anda mengimpor model U
 import com.example.unserakus.storages.Prefences;
 
 public class EditProfileActivity extends AppCompatActivity {
-
-    // DIUBAH: etName menjadi etFirstName dan etLastName
     EditText etFirstName, etLastName, etUsername;
     Button btnSaveProfile;
     ApiService apiService;
