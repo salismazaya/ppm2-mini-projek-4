@@ -115,7 +115,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         return position;
     }
 
-    // ViewHolder DIUBAH
+
     static class ThreadViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvUsername, tvThreadText, tvLikeCount, tvCommentCount;
         ImageButton btnLike, btnComment, btnDeleteThread;

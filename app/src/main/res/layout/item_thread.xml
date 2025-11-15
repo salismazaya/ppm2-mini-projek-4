@@ -7,25 +7,56 @@
     android:layout_marginBottom="8dp"
     android:background="@android:drawable/dialog_holo_light_frame">
 
+    <!-- HEADER: Nama + Username + Menu (titik 3) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:layout_marginBottom="4dp">
-        <TextView
-            android:id="@+id/tvName"
+
+        <!-- Nama + Username -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nama User"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/tvUsername"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="\@username"
-            android:layout_marginStart="8dp"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama User"
+                android:textStyle="bold"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\@username"
+                android:textSize="13sp"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Ikon titik 3 horizontal -->
+        <ImageButton
+            android:id="@+id/btnMenuThread"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_more_horiz"
+            android:scaleType="centerInside"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Options"/>
     </LinearLayout>
 
+    <!-- Isi Thread -->
     <TextView
         android:id="@+id/tvThreadText"
         android:layout_width="match_parent"
@@ -38,12 +69,14 @@
         android:layout_width="wrap_content"
         android:layout_height="100dp" />
 
+    <!-- LIKES + COMMENTS -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
+        <!-- LIKE -->
         <ImageButton
             android:id="@+id/btnLike"
             android:layout_width="40dp"
@@ -59,6 +92,7 @@
             android:text="0"
             android:layout_marginStart="4dp"/>
 
+        <!-- COMMENT -->
         <ImageButton
             android:id="@+id/btnComment"
             android:layout_width="40dp"
@@ -75,19 +109,6 @@
             android:text="0"
             android:layout_marginStart="4dp"/>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <ImageButton
-            android:id="@+id/btnDeleteThread"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_delete"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:visibility="gone" /> </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

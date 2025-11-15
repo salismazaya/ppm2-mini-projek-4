@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Pensil utuh (clean & professional) -->
+    <path
+        android:fillColor="?attr/colorOnSurface"
+        android:pathData="
+            M13.7,3.3
+            l3,3
+            l-9.9,9.9
+            h-3
+            v-3
+            z
+        " />
+
+    <!-- Ujung pensil (tip) -->
+    <path
+        android:fillColor="?attr/colorOnSurface"
+        android:pathData="
+            M18,6
+            c0.4,-0.4 0.4,-1 0,-1.4
+            l-2.6,-2.6
+            c-0.4,-0.4 -1,-0.4 -1.4,0
+            l-1.3,1.3
+            l4,4
+            z
+        " />
+
+    <!-- Garis horizontal kecil (lantai / base) -->
+    <path
+        android:fillColor="?attr/colorOnSurface"
+        android:pathData="M10,15 h6 v1.5 h-6 z"/>
+</vector>
