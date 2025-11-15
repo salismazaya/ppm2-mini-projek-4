@@ -4,6 +4,7 @@ import android.os.Build;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -11,7 +12,10 @@ import java.time.temporal.ChronoUnit;
 public class Helpers {
     public static String toTimeAgo(String isoDate) throws UnsupportedClassVersionError {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Instant instant = Instant.parse(isoDate);
+
+            OffsetDateTime odt = OffsetDateTime.parse(isoDate);
+            Instant instant = odt.toInstant();
+
             LocalDateTime time = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
             LocalDateTime now = LocalDateTime.now();
 

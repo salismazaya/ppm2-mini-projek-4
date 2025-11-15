@@ -80,39 +80,6 @@ public class ThreadDetailActivity extends AppCompatActivity {
         etComment = findViewById(R.id.etComment);
         btnSendComment = findViewById(R.id.btnSendComment);
 
-        ImageButton btnMenuThread = findViewById(R.id.btnMenuThread);
-
-        btnMenuThread.setOnClickListener(v -> {
-            // Hanya pemilik thread yang dapat edit/hapus
-            if (loggedInUserId != threadOwnerId) {
-                Toast.makeText(this, "Anda bukan pemilik thread", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            androidx.appcompat.widget.PopupMenu popup =
-                    new androidx.appcompat.widget.PopupMenu(this, v);
-            popup.getMenuInflater().inflate(R.menu.menu_thread_options, popup.getMenu());
-
-            popup.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_edit) {
-                    Toast.makeText(this, "Edit thread...", Toast.LENGTH_SHORT).show();
-                    // TODO: Buka activity edit
-                    return true;
-
-                } else if (item.getItemId() == R.id.action_delete) {
-                    new AlertDialog.Builder(this)
-                            .setTitle("Hapus Thread")
-                            .setMessage("Yakin ingin menghapus thread?")
-                            .setPositiveButton("Hapus", (dialog, which) -> deleteThread())
-                            .setNegativeButton("Batal", null)
-                            .show();
-                    return true;
-                }
-                return false;
-            });
-
-            popup.show();
-        });
     }
 
     private void deleteThread() {

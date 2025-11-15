@@ -1,5 +1,6 @@
 package com.example.unserakus.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         return new ThreadViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ThreadViewHolder holder, int position) {
         Thread thread = threadList.get(position);
@@ -62,11 +64,14 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
 
         String fileUrl = thread.getFile();
 
+//        Glide.with(context).clear(holder.ivImage);
+        holder.ivImage.setVisibility(View.GONE);
+        holder.ivImage.setImageDrawable(null);
+
         if (fileUrl != null) {
-            Glide.with(context).load(fileUrl).placeholder(R.drawable.ghost).into(holder.ivImage);
-        } else {
-            holder.ivImage.setVisibility(View.GONE);
-//            holder.ivImage.setMaxWidth(0);
+            holder.ivImage.setVisibility(View.VISIBLE);
+            Glide.with(holder.itemView.getContext()).load(fileUrl).placeholder(R.drawable.ghost).into(holder.ivImage);
+
         }
 
         holder.tvThreadText.setText(thread.getText());
@@ -109,12 +114,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
     public int getItemCount() {
         return threadList.size();
     }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
 
     static class ThreadViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvUsername, tvThreadText, tvLikeCount, tvCommentCount;
