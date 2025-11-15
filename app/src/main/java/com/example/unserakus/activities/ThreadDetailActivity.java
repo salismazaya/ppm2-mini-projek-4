@@ -1,6 +1,8 @@
 package com.example.unserakus.activities;
 
 import android.app.AlertDialog;
+import android.widget.ImageButton;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -78,7 +80,59 @@ public class ThreadDetailActivity extends AppCompatActivity {
         etComment = findViewById(R.id.etComment);
         btnSendComment = findViewById(R.id.btnSendComment);
 
+        ImageButton btnMenuThread = findViewById(R.id.btnMenuThread);
+
+        btnMenuThread.setOnClickListener(v -> {
+            // Hanya pemilik thread yang dapat edit/hapus
+            if (loggedInUserId != threadOwnerId) {
+                Toast.makeText(this, "Anda bukan pemilik thread", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            androidx.appcompat.widget.PopupMenu popup =
+                    new androidx.appcompat.widget.PopupMenu(this, v);
+            popup.getMenuInflater().inflate(R.menu.menu_thread_options, popup.getMenu());
+
+            popup.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_edit) {
+                    Toast.makeText(this, "Edit thread...", Toast.LENGTH_SHORT).show();
+                    // TODO: Buka activity edit
+                    return true;
+
+                } else if (item.getItemId() == R.id.action_delete) {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Hapus Thread")
+                            .setMessage("Yakin ingin menghapus thread?")
+                            .setPositiveButton("Hapus", (dialog, which) -> deleteThread())
+                            .setNegativeButton("Batal", null)
+                            .show();
+                    return true;
+                }
+                return false;
+            });
+
+            popup.show();
+        });
     }
+
+    private void deleteThread() {
+        loadingAlert.startLoading();
+        apiService.deleteThread(threadId, new ApiService.ApiSuccessListener() {
+            @Override
+            public void onSuccess() {
+                loadingAlert.dismissDialog();
+                Toast.makeText(ThreadDetailActivity.this, "Thread dihapus", Toast.LENGTH_SHORT).show();
+                finish(); // balik ke list thread
+            }
+
+            @Override
+            public void onError(ApiError error) {
+                loadingAlert.dismissDialog();
+                Toast.makeText(ThreadDetailActivity.this, "Gagal: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     /**
      * Setup RecyclerView dipanggil SETELAH kita mendapatkan threadOwnerId

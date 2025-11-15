@@ -111,7 +111,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
             tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
             btnLike = itemView.findViewById(R.id.btnLike);
             btnComment = itemView.findViewById(R.id.btnComment);
-            btnDeleteThread = itemView.findViewById(R.id.btnDeleteThread); // BARU
+//            btnDeleteThread = itemView.findViewById(R.id.btnDeleteThread); // BARU
         }
     }
 }
