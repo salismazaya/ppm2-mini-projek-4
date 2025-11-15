@@ -41,12 +41,12 @@ public class ApiService {
 
     public interface ApiResponseListener<T> {
         void onSuccess(T response);
-        void onError(ApiError error); // DIUBAH dari VolleyError
+        void onError(ApiError error);
     }
 
     public interface ApiSuccessListener {
         void onSuccess();
-        void onError(ApiError error); // DIUBAH dari VolleyError
+        void onError(ApiError error);
     }
 
     public ApiService(Context context, String token) {
@@ -63,7 +63,6 @@ public class ApiService {
 
 
     private <T> void addRequestWithDefaultPolicy(Request<T> request) {
-        // Terapkan Retry Policy yang Anda inginkan
         request.setRetryPolicy(new DefaultRetryPolicy(
                 DEFAULT_TIMEOUT_MS,
                 MAX_RETRIES,

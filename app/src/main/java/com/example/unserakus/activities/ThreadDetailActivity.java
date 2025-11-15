@@ -1,6 +1,8 @@
 package com.example.unserakus.activities;
 
 import android.app.AlertDialog;
+import android.widget.ImageButton;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -79,6 +81,25 @@ public class ThreadDetailActivity extends AppCompatActivity {
         btnSendComment = findViewById(R.id.btnSendComment);
 
     }
+
+    private void deleteThread() {
+        loadingAlert.startLoading();
+        apiService.deleteThread(threadId, new ApiService.ApiSuccessListener() {
+            @Override
+            public void onSuccess() {
+                loadingAlert.dismissDialog();
+                Toast.makeText(ThreadDetailActivity.this, "Thread dihapus", Toast.LENGTH_SHORT).show();
+                finish(); // balik ke list thread
+            }
+
+            @Override
+            public void onError(ApiError error) {
+                loadingAlert.dismissDialog();
+                Toast.makeText(ThreadDetailActivity.this, "Gagal: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     /**
      * Setup RecyclerView dipanggil SETELAH kita mendapatkan threadOwnerId

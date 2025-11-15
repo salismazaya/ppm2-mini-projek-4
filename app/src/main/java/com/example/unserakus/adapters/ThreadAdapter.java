@@ -1,15 +1,20 @@
 package com.example.unserakus.adapters;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.unserakus.R;
 import com.example.unserakus.api.models.Thread;
 import com.example.unserakus.api.models.User;
@@ -20,20 +25,22 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
 
     private List<Thread> threadList;
     private OnThreadActionsListener listener;
-    private int loggedInUserId; // BARU
+    private int loggedInUserId;
+
+    private Context context;
 
     // Interface DIUBAH
     public interface OnThreadActionsListener {
         void onLikeClick(int position, Thread thread);
         void onCommentClick(Thread thread);
-        void onDeleteClick(Thread thread, int position); // BARU
+        void onDeleteClick(Thread thread, int position);
     }
 
-    // Constructor DIUBAH
-    public ThreadAdapter(List<Thread> threadList, OnThreadActionsListener listener, int loggedInUserId) {
+    public ThreadAdapter(Context context, List<Thread> threadList, OnThreadActionsListener listener, int loggedInUserId) {
         this.threadList = threadList;
         this.listener = listener;
         this.loggedInUserId = loggedInUserId;
+        this.context = context;
     }
 
     @NonNull
@@ -43,6 +50,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         return new ThreadViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ThreadViewHolder holder, int position) {
         Thread thread = threadList.get(position);
@@ -52,6 +60,18 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
             String name = owner.getFirstName() + " " + owner.getLastName();
             holder.tvName.setText(name.trim());
             holder.tvUsername.setText("@" + owner.getUsername());
+        }
+
+        String fileUrl = thread.getFile();
+
+//        Glide.with(context).clear(holder.ivImage);
+        holder.ivImage.setVisibility(View.GONE);
+        holder.ivImage.setImageDrawable(null);
+
+        if (fileUrl != null) {
+            holder.ivImage.setVisibility(View.VISIBLE);
+            Glide.with(holder.itemView.getContext()).load(fileUrl).placeholder(R.drawable.ghost).into(holder.ivImage);
+
         }
 
         holder.tvThreadText.setText(thread.getText());
@@ -95,10 +115,10 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         return threadList.size();
     }
 
-    // ViewHolder DIUBAH
     static class ThreadViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvUsername, tvThreadText, tvLikeCount, tvCommentCount;
-        ImageButton btnLike, btnComment, btnDeleteThread; // BARU
+        ImageButton btnLike, btnComment, btnDeleteThread;
+        ImageView ivImage;
 
         public ThreadViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -109,7 +129,8 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
             tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
             btnLike = itemView.findViewById(R.id.btnLike);
             btnComment = itemView.findViewById(R.id.btnComment);
-            btnDeleteThread = itemView.findViewById(R.id.btnDeleteThread); // BARU
+            btnDeleteThread = itemView.findViewById(R.id.btnDeleteThread);
+            ivImage = itemView.findViewById(R.id.ivImage);
         }
     }
 }
