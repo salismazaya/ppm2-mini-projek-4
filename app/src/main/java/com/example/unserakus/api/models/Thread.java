@@ -60,7 +60,10 @@ public class Thread {
     }
 
     public String getFile() {
-        return file;
+        if (file == null) {
+            return null;
+        }
+        return  file.replace("http://", "https://");
     }
 
     public String createdAtTimeAgo() {

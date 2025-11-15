@@ -86,6 +86,7 @@ public class CreateThreadActivity extends AppCompatActivity {
 
         btnPostThread.setOnClickListener(v -> {
             String text = etThreadText.getText().toString();
+            loadingAlert.startLoading();
 
             // Panggil Multipart API
             apiService.createThreadMultipart(text, selectedImageData, new ApiService.ApiResponseListener<Thread>() {
@@ -93,10 +94,11 @@ public class CreateThreadActivity extends AppCompatActivity {
                 public void onSuccess(Thread response) {
                     Toast.makeText(CreateThreadActivity.this, "Thread terkirim!", Toast.LENGTH_SHORT).show();
                     finish();
+                    loadingAlert.dismissDialog();
                 }
                 @Override
                 public void onError(ApiError error) {
-                    // Error handling
+                    loadingAlert.dismissDialog();
                 }
             });
         });
