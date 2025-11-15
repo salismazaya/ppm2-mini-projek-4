@@ -1,15 +1,19 @@
 package com.example.unserakus.adapters;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.unserakus.R;
 import com.example.unserakus.api.models.Thread;
 import com.example.unserakus.api.models.User;
@@ -20,20 +24,22 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
 
     private List<Thread> threadList;
     private OnThreadActionsListener listener;
-    private int loggedInUserId; // BARU
+    private int loggedInUserId;
+
+    private Context context;
 
     // Interface DIUBAH
     public interface OnThreadActionsListener {
         void onLikeClick(int position, Thread thread);
         void onCommentClick(Thread thread);
-        void onDeleteClick(Thread thread, int position); // BARU
+        void onDeleteClick(Thread thread, int position);
     }
 
-    // Constructor DIUBAH
-    public ThreadAdapter(List<Thread> threadList, OnThreadActionsListener listener, int loggedInUserId) {
+    public ThreadAdapter(Context context, List<Thread> threadList, OnThreadActionsListener listener, int loggedInUserId) {
         this.threadList = threadList;
         this.listener = listener;
         this.loggedInUserId = loggedInUserId;
+        this.context = context;
     }
 
     @NonNull
@@ -54,11 +60,19 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
             holder.tvUsername.setText("@" + owner.getUsername());
         }
 
+        String fileUrl = thread.getFile();
+
+        if (fileUrl != null) {
+            Glide.with(context).load(fileUrl).placeholder(R.drawable.ghost).into(holder.ivImage);
+        } else {
+            holder.ivImage.setVisibility(View.GONE);
+//            holder.ivImage.setMaxWidth(0);
+        }
+
         holder.tvThreadText.setText(thread.getText());
         holder.tvLikeCount.setText(String.valueOf(thread.getLikesCount()));
         holder.tvCommentCount.setText(String.valueOf(thread.getCommentsCount()));
 
-        // Set status 'Like'
         if (thread.isLiked()) {
             holder.btnLike.setImageResource(R.drawable.ic_like_filled);
             holder.btnLike.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_light));
@@ -78,7 +92,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         }
 
 
-        // Set Listeners
         holder.btnLike.setOnClickListener(v -> {
             listener.onLikeClick(holder.getAdapterPosition(), thread);
         });
@@ -97,10 +110,16 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
         return threadList.size();
     }
 
-    // ViewHolder DIUBAH
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+
     static class ThreadViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvUsername, tvThreadText, tvLikeCount, tvCommentCount;
-        ImageButton btnLike, btnComment, btnDeleteThread; // BARU
+        ImageButton btnLike, btnComment, btnDeleteThread;
+        ImageView ivImage;
 
         public ThreadViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -111,7 +130,8 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
             tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
             btnLike = itemView.findViewById(R.id.btnLike);
             btnComment = itemView.findViewById(R.id.btnComment);
-//            btnDeleteThread = itemView.findViewById(R.id.btnDeleteThread); // BARU
+            btnDeleteThread = itemView.findViewById(R.id.btnDeleteThread);
+            ivImage = itemView.findViewById(R.id.ivImage);
         }
     }
 }

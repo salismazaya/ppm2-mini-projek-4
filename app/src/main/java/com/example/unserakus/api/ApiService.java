@@ -3,18 +3,22 @@ package com.example.unserakus.api;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response; // DIUBAH: Import ini mungkin diperlukan
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.unserakus.api.models.ApiError;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import com.example.unserakus.api.models.Comment;
 import com.example.unserakus.api.models.Like;
-import com.example.unserakus.api.models.LoginResponse; // Diperlukan dari revisi sebelumnya
+import com.example.unserakus.api.models.LoginResponse;
 
 import com.example.unserakus.api.models.Thread;
 import com.example.unserakus.api.models.User;
@@ -28,24 +32,21 @@ import java.util.Map;
 
 public class ApiService {
 
-    private static final String BASE_URL = "https://ppm2-mini-projek-backend.onrender.com/api";
+    public static final String BASE_URL = "https://talkmate.presensee.my.id/api";
     private final RequestQueue requestQueue;
     private final String authToken;
+    private static final int DEFAULT_TIMEOUT_MS = 10000;
+    private static final int MAX_RETRIES = 0;
 
-    /**
-     * DIUBAH: Listener generik sekarang mengembalikan ApiError.
-     */
+
     public interface ApiResponseListener<T> {
         void onSuccess(T response);
-        void onError(ApiError error); // DIUBAH dari VolleyError
+        void onError(ApiError error);
     }
 
-    /**
-     * DIUBAH: Listener sederhana sekarang mengembalikan ApiError.
-     */
     public interface ApiSuccessListener {
         void onSuccess();
-        void onError(ApiError error); // DIUBAH dari VolleyError
+        void onError(ApiError error);
     }
 
     public ApiService(Context context, String token) {
@@ -59,19 +60,21 @@ public class ApiService {
         return headers;
     }
 
-    // --- Helper Error Listener ---
-    // TAMBAHAN: Helper ini membungkus VolleyError menjadi ApiError
 
-    /**
-     * Membuat ErrorListener yang mengonversi VolleyError ke ApiError kustom.
-     */
+
+    private <T> void addRequestWithDefaultPolicy(Request<T> request) {
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                DEFAULT_TIMEOUT_MS,
+                MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
+        requestQueue.add(request);
+    }
+
     private <T> Response.ErrorListener createErrorListener(final ApiResponseListener<T> listener) {
         return error -> listener.onError(new ApiError(error));
     }
 
-    /**
-     * Membuat ErrorListener yang mengonversi VolleyError ke ApiError kustom.
-     */
     private Response.ErrorListener createErrorListener(final ApiSuccessListener listener) {
         return error -> listener.onError(new ApiError(error));
     }
@@ -98,7 +101,9 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener) // DIUBAH
         );
-        requestQueue.add(request);
+
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
     }
 
     public void deleteComment(int id, final ApiSuccessListener listener) {
@@ -112,7 +117,10 @@ public class ApiService {
                 return getAuthHeaders();
             }
         };
-        requestQueue.add(request);
+//        requestQueue.add(request);
+
+        addRequestWithDefaultPolicy(request);
+
     }
 
     // --- Likes ---
@@ -136,7 +144,8 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener) // DIUBAH
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
     }
 
     public void deleteLike(int id, final ApiSuccessListener listener) {
@@ -150,8 +159,11 @@ public class ApiService {
                 return getAuthHeaders();
             }
         };
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
+
 
     // --- Auth (Login/Register) ---
 
@@ -175,10 +187,13 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener) // DIUBAH
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
 
     public void register(String username, String password, String name, final ApiSuccessListener listener) {
+        Log.d("API", "REGISTER_CALLED");
         String url = BASE_URL + "/register/";
         JSONObject requestBody = new JSONObject();
         try {
@@ -215,10 +230,11 @@ public class ApiService {
                 return super.parseNetworkResponse(response);
             }
         };
-        requestQueue.add(request);
-    }
 
-    // --- Threads ---
+
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+    }
 
     public void listThreads(String orderBy, final ApiResponseListener<List<Thread>> listener) {
         String url = BASE_URL + "/threads/?order=" + orderBy;
@@ -233,7 +249,9 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener) // DIUBAH
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
 
     public void listThreads(final ApiResponseListener<List<Thread>> listener) {
@@ -259,7 +277,9 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener) // DIUBAH
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
 
     public void retrieveThread(int id, final ApiResponseListener<Thread> listener) {
@@ -273,7 +293,9 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener) // DIUBAH
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
 
     public void updateThread(int id, String text, final ApiResponseListener<Thread> listener) {
@@ -295,7 +317,9 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener) // DIUBAH
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
 
     public void partialUpdateThread(int id, String text, final ApiResponseListener<Thread> listener) {
@@ -317,7 +341,9 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener) // DIUBAH
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
 
     public void deleteThread(int id, final ApiSuccessListener listener) {
@@ -331,7 +357,9 @@ public class ApiService {
                 return getAuthHeaders();
             }
         };
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
 
     // --- User Profile ---
@@ -352,7 +380,9 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener)
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
 
     /**
@@ -383,6 +413,100 @@ public class ApiService {
                 listener::onSuccess,
                 createErrorListener(listener)
         );
-        requestQueue.add(request);
+//        requestQueue.add(request);
+        addRequestWithDefaultPolicy(request);
+
     }
+
+    /**
+     * Membuat thread baru dengan gambar (Multipart)
+     */
+    public void createThreadMultipart(String text, byte[] fileData, final ApiResponseListener<Thread> listener) {
+        String url = BASE_URL + "/threads/"; // Sesuaikan endpoint
+
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, url,
+                response -> {
+                    // Sukses: Parse JSON response manual karena VolleyMultipartRequest mengembalikan NetworkResponse
+                    try {
+                        String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        Thread thread = new Gson().fromJson(jsonString, Thread.class);
+                        listener.onSuccess(thread);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        listener.onError(new ApiError(new VolleyError(e)));
+                    }
+                },
+                error -> listener.onError(new ApiError(error))) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getAuthHeaders(); // Sertakan token
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("text", text); // field 'text'
+                return params;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                if (fileData != null) {
+                    // 'file' adalah nama field di Serializer Django
+                    // "image.jpg" adalah nama file dummy (bisa diganti)
+                    // "image/jpeg" adalah mime type
+                    params.put("file", new DataPart("image.jpg", fileData, "image/jpeg"));
+                }
+                return params;
+            }
+        };
+
+//        requestQueue.add(multipartRequest);
+        addRequestWithDefaultPolicy(multipartRequest);
+
+    }
+    public void updateProfilePicture(byte[] fileData, final ApiResponseListener<User> listener) {
+        String url = BASE_URL + "/user/";
+
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.PUT, url,
+                response -> {
+                    // Sukses: Parse JSON response manual
+                    try {
+                        String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        User user = new Gson().fromJson(jsonString, User.class);
+                        listener.onSuccess(user);
+                    } catch (Exception e) {
+                        listener.onError(new ApiError(new VolleyError(e)));
+                    }
+                },
+                error -> listener.onError(new ApiError(error))) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getAuthHeaders();
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Karena ini hanya untuk gambar, field text diabaikan
+                return null;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                if (fileData != null) {
+                    // PENTING: Nama field harus 'profile_picture' sesuai serializer Anda
+                    params.put("profile_picture", new DataPart("profile.jpg", fileData, "image/jpeg"));
+                }
+                return params;
+            }
+        };
+
+        // Terapkan Retry Policy default
+        addRequestWithDefaultPolicy(multipartRequest);
+    }
+
 }
