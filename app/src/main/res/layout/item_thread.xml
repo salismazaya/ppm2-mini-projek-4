@@ -30,8 +30,13 @@
         android:id="@+id/tvThreadText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ini adalah isi dari text thread yang bisa jadi cukup panjang..."
+        android:text=""
         android:layout_marginBottom="8dp"/>
+
+    <ImageView
+        android:id="@+id/ivImage"
+        android:layout_width="wrap_content"
+     android:layout_height="100dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

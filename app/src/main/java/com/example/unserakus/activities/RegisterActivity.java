@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.unserakus.LoadingAlert;
 import com.example.unserakus.R;
 import com.example.unserakus.api.models.ApiError; // Import
 import com.example.unserakus.api.ApiService; // Import
@@ -17,11 +18,15 @@ public class RegisterActivity extends AppCompatActivity {
     EditText etName, etUsername, etPassword, etConfirmPassword;
     Button btnRegister;
     ApiService apiService;
+    LoadingAlert loadingAlert;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        loadingAlert = new LoadingAlert(this);
 
         apiService = new ApiService(this, "");
 
@@ -51,12 +56,12 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Tampilkan loading indicator
+        loadingAlert.startLoading();
 
         apiService.register(username, password, name, new ApiService.ApiSuccessListener() {
             @Override
             public void onSuccess() {
-                // TODO: Sembunyikan loading indicator
+                loadingAlert.dismissDialog();
                 Log.d("REGISTER_SUCCESS", "Registrasi berhasil");
                 Toast.makeText(RegisterActivity.this, "Registrasi berhasil, silakan login", Toast.LENGTH_LONG).show();
                 finish(); // Kembali ke halaman Login
@@ -64,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onError(ApiError error) {
-                // TODO: Sembunyikan loading indicator
+                loadingAlert.dismissDialog();
                 String errorMessage = error.getDetailMessage();
                 Log.e("REGISTER_ERROR", "Error: " + errorMessage);
                 Toast.makeText(RegisterActivity.this, "Registrasi Gagal: " + errorMessage, Toast.LENGTH_SHORT).show();

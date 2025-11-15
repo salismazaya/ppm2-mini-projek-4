@@ -103,7 +103,7 @@ public class HomeFragment extends Fragment {
 
     private void setupRecyclerView() {
         // Constructor adapter DIUBAH
-        threadAdapter = new ThreadAdapter(threadList, new ThreadAdapter.OnThreadActionsListener() {
+        threadAdapter = new ThreadAdapter(getContext(), threadList, new ThreadAdapter.OnThreadActionsListener() {
             @Override
             public void onLikeClick(int position, Thread thread) {
                 handleLikeClick(position, thread);
@@ -150,9 +150,6 @@ public class HomeFragment extends Fragment {
         if (sortBy.equals("trending")) {
             sortByTranslated = "trending";
         }
-
-        // CATATAN: API Anda (listThreads) tidak memiliki parameter sort.
-        // Anda perlu menambahkannya di backend (misal: /api/threads/?sort=trending)
 
         apiService.listThreads(sortByTranslated, new ApiService.ApiResponseListener<List<Thread>>() {
             @Override

@@ -1,6 +1,8 @@
 package com.example.unserakus.activities;
 
 import android.app.AlertDialog;
+import android.widget.ImageButton;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -13,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.unserakus.LoadingAlert;
 import com.example.unserakus.R;
 import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.adapters.CommentAdapter;
@@ -42,11 +45,14 @@ public class ThreadDetailActivity extends AppCompatActivity {
     private int threadId;
     private int loggedInUserId; // BARU
     private int threadOwnerId = -1; // BARU (default -1)
+    LoadingAlert loadingAlert;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thread_detail);
+
+        loadingAlert = new LoadingAlert(this);
 
         // Ambil token
         String token = SharedPreferencesHelper.getToken(this);
@@ -76,6 +82,25 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
     }
 
+    private void deleteThread() {
+        loadingAlert.startLoading();
+        apiService.deleteThread(threadId, new ApiService.ApiSuccessListener() {
+            @Override
+            public void onSuccess() {
+                loadingAlert.dismissDialog();
+                Toast.makeText(ThreadDetailActivity.this, "Thread dihapus", Toast.LENGTH_SHORT).show();
+                finish(); // balik ke list thread
+            }
+
+            @Override
+            public void onError(ApiError error) {
+                loadingAlert.dismissDialog();
+                Toast.makeText(ThreadDetailActivity.this, "Gagal: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     /**
      * Setup RecyclerView dipanggil SETELAH kita mendapatkan threadOwnerId
      */
@@ -103,12 +128,12 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
 
     private void loadThreadDetails() {
-        // TODO: Tampilkan loading
+        loadingAlert.startLoading();
 
         apiService.retrieveThread(threadId, new ApiService.ApiResponseListener<Thread>() {
             @Override
             public void onSuccess(Thread thread) {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
 
                 User owner = thread.getOwner();
                 if (owner != null) {
@@ -133,18 +158,18 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
             @Override
             public void onError(ApiError error) {
-                // ... (error handling)
+                loadingAlert.dismissDialog();
             }
         });
     }
 
     private void handleDeleteComment(CommentMinimal comment, int position) {
-        // TODO: Tampilkan loading
+        loadingAlert.startLoading();
 
         apiService.deleteComment(comment.getId(), new ApiService.ApiSuccessListener() {
             @Override
             public void onSuccess() {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
                 Toast.makeText(ThreadDetailActivity.this, "Komentar dihapus", Toast.LENGTH_SHORT).show();
                 // Update list secara lokal
                 commentList.remove(position);
@@ -153,14 +178,15 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
             @Override
             public void onError(ApiError error) {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
                 Toast.makeText(ThreadDetailActivity.this, "Gagal hapus: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void handleSendComment() {
-        // ... (fungsi ini tidak berubah)
+        loadingAlert.startLoading();
+
         String commentText = etComment.getText().toString().trim();
         if (commentText.isEmpty()) {
             return;
@@ -169,14 +195,16 @@ public class ThreadDetailActivity extends AppCompatActivity {
         apiService.createComment(threadId, commentText, new ApiService.ApiResponseListener<Comment>() {
             @Override
             public void onSuccess(Comment newComment) {
+                loadingAlert.dismissDialog();
                 etComment.setText("");
-                // Cukup panggil loadThreadDetails untuk refresh
+
                 loadThreadDetails();
                 Toast.makeText(ThreadDetailActivity.this, "Komentar terkirim", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(ApiError error) {
+                loadingAlert.dismissDialog();
                 Toast.makeText(ThreadDetailActivity.this, "Gagal mengirim: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();
             }
         });
