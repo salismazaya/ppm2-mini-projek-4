@@ -56,12 +56,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
 
         holder.tvCommentText.setText(comment.getText());
+        holder.tvTimePost.setText(comment.createdAtTimeAgo());
 
-        // --- LOGIKA HAPUS (BARU) ---
-        // Tampilkan jika:
-        // 1. User yang login adalah PEMILIK KOMENTAR
-        // ATAU
-        // 2. User yang login adalah PEMILIK THREAD
         if (loggedInUserId == user.getId() || loggedInUserId == threadOwnerId) {
             holder.btnDeleteComment.setVisibility(View.VISIBLE);
             holder.btnDeleteComment.setOnClickListener(v -> {
@@ -79,7 +75,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     // ViewHolder DIUBAH
     static class CommentViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvUsername, tvCommentText;
+        TextView tvName, tvUsername, tvCommentText, tvTimePost;
         ImageButton btnDeleteComment; // BARU
 
         public CommentViewHolder(@NonNull View itemView) {
@@ -87,7 +83,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             tvName = itemView.findViewById(R.id.tvName);
             tvUsername = itemView.findViewById(R.id.tvUsername);
             tvCommentText = itemView.findViewById(R.id.tvCommentText);
-            btnDeleteComment = itemView.findViewById(R.id.btnDeleteComment); // BARU
+            btnDeleteComment = itemView.findViewById(R.id.btnDeleteComment);
+            tvTimePost = itemView.findViewById(R.id.tvTimePost);
         }
     }
 }
