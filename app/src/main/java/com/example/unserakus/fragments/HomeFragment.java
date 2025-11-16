@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.unserakus.LoadingAlert;
 import com.example.unserakus.R;
 import com.example.unserakus.SharedPreferencesHelper;
 import com.example.unserakus.activities.CreateThreadActivity;
@@ -44,6 +45,7 @@ public class HomeFragment extends Fragment {
     ThreadAdapter threadAdapter;
     List<Thread> threadList = new ArrayList<>();
     ApiService apiService;
+    LoadingAlert loadingAlert;
 
     private int loggedInUserId; // BARU
 
@@ -58,6 +60,7 @@ public class HomeFragment extends Fragment {
             return v;
         }
         apiService = new ApiService(getContext(), token);
+        loadingAlert = new LoadingAlert(getActivity());
 
         // Ambil ID user yang login
         loggedInUserId = SharedPreferencesHelper.getLoggedInUserId(getContext());
@@ -81,29 +84,29 @@ public class HomeFragment extends Fragment {
     }
 
     private void handleDeleteThread(Thread thread, int position) {
-        // TODO: Tampilkan loading
+        loadingAlert.startLoading();
 
         apiService.deleteThread(thread.getId(), new ApiService.ApiSuccessListener() {
             @Override
             public void onSuccess() {
-                // TODO: Sembunyikan loading
+
                 Toast.makeText(getContext(), "Thread dihapus", Toast.LENGTH_SHORT).show();
                 // Hapus item dari list dan update adapter
                 threadList.remove(position);
                 threadAdapter.notifyItemRemoved(position);
+                loadingAlert.dismissDialog();
             }
 
             @Override
             public void onError(ApiError error) {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
                 Toast.makeText(getContext(), "Gagal menghapus: " + error.getDetailMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void setupRecyclerView() {
-        // Constructor adapter DIUBAH
-        threadAdapter = new ThreadAdapter(getContext(), threadList, new ThreadAdapter.OnThreadActionsListener() {
+        threadAdapter = new ThreadAdapter(threadList, new ThreadAdapter.OnThreadActionsListener() {
             @Override
             public void onLikeClick(int position, Thread thread) {
                 handleLikeClick(position, thread);
@@ -143,7 +146,8 @@ public class HomeFragment extends Fragment {
 
     private void loadThreads(String sortBy) {
         Log.d("HomeFragment", "Memuat threads... sort by: " + sortBy);
-        // TODO: Tampilkan loading (misal: SwipeRefreshLayout)
+
+        loadingAlert.startLoading();
 
         String sortByTranslated = "recent";
 
@@ -154,7 +158,7 @@ public class HomeFragment extends Fragment {
         apiService.listThreads(sortByTranslated, new ApiService.ApiResponseListener<List<Thread>>() {
             @Override
             public void onSuccess(List<Thread> response) {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
                 threadList.clear();
                 threadList.addAll(response);
                 threadAdapter.notifyDataSetChanged();
@@ -163,7 +167,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onError(ApiError error) {
-                // TODO: Sembunyikan loading
+                loadingAlert.dismissDialog();
+
                 Log.e("HomeFragment", "Gagal memuat threads: " + error.getDetailMessage());
                 Toast.makeText(getContext(), "Gagal memuat data", Toast.LENGTH_SHORT).show();
             }

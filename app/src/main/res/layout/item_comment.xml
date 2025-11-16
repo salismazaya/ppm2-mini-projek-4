@@ -11,41 +11,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="2dp">
+        android:gravity="center_vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal">
             <TextView
                 android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nama Komentator"
+                android:text="Nama "
                 android:textStyle="bold"/>
             <TextView
                 android:id="@+id/tvUsername"
+                android:layout_marginLeft="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="\@usernamekomen"
+                android:text="\@username"
                 android:textSize="12sp"/>
         </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
         <ImageButton
             android:id="@+id/btnDeleteComment"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:padding="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:visibility="gone"/> </LinearLayout>
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvTimePost"
+        android:textSize="10dp"
+        android:textColor="@color/gray"
+        android:text=""/>
 
     <TextView
         android:id="@+id/tvCommentText"
