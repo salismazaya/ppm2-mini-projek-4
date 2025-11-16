@@ -51,6 +51,10 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
     public void onBindViewHolder(@NonNull ThreadViewHolder holder, int position) {
         Thread thread = threadList.get(position);
 
+        thread.createdAtTimeAgo();
+
+
+
         User owner = thread.getOwner();
         if (owner != null) {
             String name = owner.getFirstName() + " " + owner.getLastName();
