@@ -69,7 +69,8 @@
             android:id="@+id/btnSendComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kirim"/>
+            android:text="Kirim"
+            android:backgroundTint="#641FFD"/>
     </LinearLayout>
 
 </RelativeLayout>
