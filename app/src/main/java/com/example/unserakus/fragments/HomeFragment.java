@@ -1,7 +1,16 @@
 package com.example.unserakus.fragments;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -9,6 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,8 +57,15 @@ public class HomeFragment extends Fragment {
     List<Thread> threadList = new ArrayList<>();
     ApiService apiService;
     LoadingAlert loadingAlert;
+    EditText etSearch;
 
-    private int loggedInUserId; // BARU
+    private int loggedInUserId;
+    private Runnable workRunnable;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    String threadQuery;
+    String threadSortBy = "terbaru";
+
 
     @Nullable
     @Override
@@ -73,6 +91,7 @@ public class HomeFragment extends Fragment {
 
         rvThreads = v.findViewById(R.id.rvThreads);
         fabCreateThread = v.findViewById(R.id.fabCreateThread);
+        etSearch = v.findViewById(R.id.etSearch);
 
         setupRecyclerView();
 
@@ -80,7 +99,50 @@ public class HomeFragment extends Fragment {
             startActivity(new Intent(getContext(), CreateThreadActivity.class));
         });
 
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (workRunnable != null) {
+                    handler.removeCallbacks(workRunnable);
+                }
+
+                workRunnable = () -> onUserStoppedTyping(s.toString());
+                handler.postDelayed(workRunnable, 700);
+            }
+        });
+
         return v;
+    }
+
+    private void hideKeyboard() {
+        Activity activity = this.getActivity();
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void onUserStoppedTyping(String text) {
+        Log.d("THREAD_QUERY", text);
+
+        threadQuery = text;
+
+        hideKeyboard();
+        loadThreads();
     }
 
     private void handleDeleteThread(Thread thread, int position) {
@@ -140,22 +202,21 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Load atau refresh thread setiap kali fragment ini ditampilkan
-        loadThreads("terbaru"); // Default sort
+        loadThreads();
     }
 
-    private void loadThreads(String sortBy) {
-        Log.d("HomeFragment", "Memuat threads... sort by: " + sortBy);
+    private void loadThreads() {
+        Log.d("HomeFragment", "Memuat threads... sort by: " + threadSortBy);
 
         loadingAlert.startLoading();
 
         String sortByTranslated = "recent";
 
-        if (sortBy.equals("trending")) {
+        if (threadSortBy.equals("trending")) {
             sortByTranslated = "trending";
         }
 
-        apiService.listThreads(sortByTranslated, new ApiService.ApiResponseListener<List<Thread>>() {
+        apiService.listThreads(sortByTranslated, threadQuery, new ApiService.ApiResponseListener<List<Thread>>() {
             @Override
             public void onSuccess(List<Thread> response) {
                 loadingAlert.dismissDialog();
@@ -181,7 +242,7 @@ public class HomeFragment extends Fragment {
             apiService.deleteLike(thread.getId(), new ApiService.ApiSuccessListener() {
                 @Override
                 public void onSuccess() {
-                    loadThreads("terbaru");
+                    loadThreads();
                 }
 
                 @Override
@@ -191,12 +252,10 @@ public class HomeFragment extends Fragment {
             });
 
         } else {
-            // TODO: Panggil apiService.createLike()
             apiService.createLike(thread.getId(), new ApiService.ApiResponseListener<Like>() {
                 @Override
                 public void onSuccess(Like response) {
-                    // Refresh data thread di posisi itu
-                    loadThreads("terbaru"); // Cara mudah untuk refresh
+                    loadThreads(); // Cara mudah untuk refresh
                     // Cara lebih baik:
                     // thread.setLiked(true);
                     // thread.setLikesCount(thread.getLikesCount() + 1);
@@ -222,12 +281,14 @@ public class HomeFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.sort_newest) {
-            // TODO: Event klik sort Terbaru
-            loadThreads("terbaru");
+            threadSortBy = "terbaru";
+
+            loadThreads();
             return true;
         } else if (itemId == R.id.sort_trending) {
-            // TODO: Event klik sort Trending
-            loadThreads("trending");
+            threadSortBy = "trending";
+
+            loadThreads();
             return true;
         }
         return super.onOptionsItemSelected(item);
