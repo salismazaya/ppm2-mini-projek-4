@@ -11,27 +11,47 @@
         android:padding="16dp"
         android:background="#f0f0f0">
 
-        <TextView
-            android:id="@+id/tvName"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nama User"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="\@username"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"/>
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tvUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="\@username"
-            android:textSize="14sp"
-            android:layout_marginBottom="8dp"/>
+            android:id="@+id/tvTimePost"
+            android:textSize="10dp"
+            android:textColor="@color/gray"
+            android:paddingTop="0dp"
+            android:text=""/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:visibility="gone"
+            android:id="@+id/ivImage"/>
 
         <TextView
             android:id="@+id/tvThreadText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ini adalah isi dari text thread yang panjang..."
+            android:text="Text"
             android:textSize="16sp"/>
     </LinearLayout>
 
@@ -69,7 +89,8 @@
             android:id="@+id/btnSendComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kirim"/>
+            android:text="Kirim"
+            android:backgroundTint="#641FFD"/>
     </LinearLayout>
 
 </RelativeLayout>
