@@ -1,12 +1,14 @@
 package com.example.unserakus.activities;
 
 import android.app.AlertDialog;
+import android.view.View;
 import android.widget.ImageButton;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.unserakus.LoadingAlert;
 import com.example.unserakus.R;
 import com.example.unserakus.SharedPreferencesHelper;
@@ -38,6 +41,7 @@ public class ThreadDetailActivity extends AppCompatActivity {
     RecyclerView rvComments;
     EditText etComment;
     Button btnSendComment;
+    ImageView ivImage;
 
     ApiService apiService;
     CommentAdapter commentAdapter;
@@ -79,7 +83,7 @@ public class ThreadDetailActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rvComments);
         etComment = findViewById(R.id.etComment);
         btnSendComment = findViewById(R.id.btnSendComment);
-
+        ivImage = findViewById(R.id.ivImage);
     }
 
     private void deleteThread() {
@@ -144,6 +148,16 @@ public class ThreadDetailActivity extends AppCompatActivity {
                     tvUsername.setText("@" + owner.getUsername());
                 }
                 tvThreadText.setText(thread.getText());
+
+                String fileUrl = thread.getFile();
+                ivImage.setVisibility(View.GONE);
+                ivImage.setImageDrawable(null);
+
+                if (fileUrl != null){
+                    ivImage.setVisibility(View.VISIBLE);
+                    Glide.with(ivImage).load(fileUrl).into(ivImage);
+                }
+
 
                 commentList.clear();
                 commentList.addAll(thread.getComments());
