@@ -151,16 +151,6 @@ public class ThreadDetailActivity extends AppCompatActivity {
                 }
                 tvThreadText.setText(thread.getText());
 
-                String fileUrl = thread.getFile();
-                ivImage.setVisibility(View.GONE);
-                ivImage.setImageDrawable(null);
-
-                if (fileUrl != null){
-                    ivImage.setVisibility(View.VISIBLE);
-                    Glide.with(ivImage).load(fileUrl).into(ivImage);
-                }
-
-
                 commentList.clear();
                 commentList.addAll(thread.getComments());
 
