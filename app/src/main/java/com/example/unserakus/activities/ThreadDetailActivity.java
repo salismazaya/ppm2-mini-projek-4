@@ -37,11 +37,11 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_THREAD_ID = "EXTRA_THREAD_ID";
 
-    TextView tvName, tvUsername, tvThreadText;
+    TextView tvName, tvUsername, tvThreadText, tvTimePost;
+    ImageView ivImage;
     RecyclerView rvComments;
     EditText etComment;
     Button btnSendComment;
-    ImageView ivImage;
 
     ApiService apiService;
     CommentAdapter commentAdapter;
@@ -67,9 +67,7 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
         threadId = getIntent().getIntExtra(EXTRA_THREAD_ID, -1);
 
-
         initViews();
-        // setupRecyclerView(); // DIHAPUS DARI SINI
 
         loadThreadDetails(); // Setup RecyclerView akan dipanggil di dalam ini
 
@@ -83,6 +81,7 @@ public class ThreadDetailActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rvComments);
         etComment = findViewById(R.id.etComment);
         btnSendComment = findViewById(R.id.btnSendComment);
+        tvTimePost = findViewById(R.id.tvTimePost);
         ivImage = findViewById(R.id.ivImage);
     }
 
@@ -128,6 +127,9 @@ public class ThreadDetailActivity extends AppCompatActivity {
         );
         rvComments.setLayoutManager(new LinearLayoutManager(this));
         rvComments.setAdapter(commentAdapter);
+
+
+
     }
 
 
@@ -161,6 +163,16 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
                 commentList.clear();
                 commentList.addAll(thread.getComments());
+
+                tvTimePost.setText(thread.createdAtTimeAgo());
+
+//                ivImage.setVisibility(View.GONE);
+                ivImage.setImageDrawable(null);
+
+                if (thread.getFile() != null) {
+                    Glide.with(getApplicationContext()).load(thread.getFile()).into(ivImage);
+                    ivImage.setVisibility(TextView.VISIBLE);
+                }
 
                 // Panggil setupRecyclerView SEKARANG, setelah kita punya threadOwnerId
                 if (commentAdapter == null) {

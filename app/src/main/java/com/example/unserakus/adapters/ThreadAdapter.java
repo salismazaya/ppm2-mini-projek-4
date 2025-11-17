@@ -27,20 +27,16 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
     private OnThreadActionsListener listener;
     private int loggedInUserId;
 
-    private Context context;
-
-    // Interface DIUBAH
     public interface OnThreadActionsListener {
         void onLikeClick(int position, Thread thread);
         void onCommentClick(Thread thread);
         void onDeleteClick(Thread thread, int position);
     }
 
-    public ThreadAdapter(Context context, List<Thread> threadList, OnThreadActionsListener listener, int loggedInUserId) {
+    public ThreadAdapter(List<Thread> threadList, OnThreadActionsListener listener, int loggedInUserId) {
         this.threadList = threadList;
         this.listener = listener;
         this.loggedInUserId = loggedInUserId;
-        this.context = context;
     }
 
     @NonNull
@@ -55,10 +51,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
     public void onBindViewHolder(@NonNull ThreadViewHolder holder, int position) {
         Thread thread = threadList.get(position);
 
-        thread.createdAtTimeAgo();
-
-
-
         User owner = thread.getOwner();
         if (owner != null) {
             String name = owner.getFirstName() + " " + owner.getLastName();
@@ -68,9 +60,9 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
 
         String fileUrl = thread.getFile();
 
-//        Glide.with(context).clear(holder.ivImage);
         holder.ivImage.setVisibility(View.GONE);
         holder.ivImage.setImageDrawable(null);
+        holder.tvTimePost.setText(thread.createdAtTimeAgo());
 
         if (fileUrl != null) {
             holder.ivImage.setVisibility(View.VISIBLE);
@@ -120,7 +112,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
     }
 
     static class ThreadViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvUsername, tvThreadText, tvLikeCount, tvCommentCount;
+        TextView tvName, tvUsername, tvThreadText, tvLikeCount, tvCommentCount, tvTimePost;
         ImageButton btnLike, btnComment, btnDeleteThread;
         ImageView ivImage;
 
@@ -135,6 +127,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ThreadView
             btnComment = itemView.findViewById(R.id.btnComment);
             btnDeleteThread = itemView.findViewById(R.id.btnDeleteThread);
             ivImage = itemView.findViewById(R.id.ivImage);
+            tvTimePost = itemView.findViewById(R.id.tvTimePost);
         }
     }
 }

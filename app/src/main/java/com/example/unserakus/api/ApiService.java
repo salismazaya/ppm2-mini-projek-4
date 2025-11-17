@@ -236,8 +236,17 @@ public class ApiService {
         addRequestWithDefaultPolicy(request);
     }
 
-    public void listThreads(String orderBy, final ApiResponseListener<List<Thread>> listener) {
+    public void listThreads(String orderBy, String query, final ApiResponseListener<List<Thread>> listener) {
         String url = BASE_URL + "/threads/?order=" + orderBy;
+
+        if (query != null && query.isEmpty()) {
+            query = null;
+        }
+
+        if (query != null) {
+            url = url + "&query=" + query;
+        }
+
         Type listType = new TypeToken<List<Thread>>() {}.getType();
 
         GsonRequest<List<Thread>> request = new GsonRequest<>(
@@ -247,15 +256,18 @@ public class ApiService {
                 listType,
                 getAuthHeaders(),
                 listener::onSuccess,
-                createErrorListener(listener) // DIUBAH
+                createErrorListener(listener)
         );
 //        requestQueue.add(request);
         addRequestWithDefaultPolicy(request);
+    }
 
+    public void listThreads(String orderBy, final ApiResponseListener<List<Thread>> listener) {
+        listThreads(orderBy, null, listener);
     }
 
     public void listThreads(final ApiResponseListener<List<Thread>> listener) {
-        listThreads("recent", listener);
+        listThreads("recent", null, listener);
     }
 
     public void createThread(String text, final ApiResponseListener<Thread> listener) {

@@ -1,56 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp"
-    android:layout_marginBottom="4dp"
-    android:background="#FAFAFA">
+    android:padding="12dp"
+    android:background="#FFFFFF">
 
+    <!-- Header: Nama, Username & Delete -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="2dp">
+        android:gravity="center_vertical">
 
+        <!-- Nama & Username -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nama Komentator"
-                android:textStyle="bold"/>
+                android:textSize="15sp"
+                android:textColor="#000000"
+                android:text="Nama"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/tvUsername"
+                android:layout_marginLeft="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="\@usernamekomen"
-                android:textSize="12sp"/>
+                android:text="\@username"
+                android:textSize="12sp"
+                android:textColor="#888888" />
         </LinearLayout>
 
+        <!-- Spacer -->
         <View
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <ImageButton
             android:id="@+id/btnDeleteComment"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:padding="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:visibility="gone"/> </LinearLayout>
+            android:visibility="gone"
+            app:tint="#FF3B30" />
+    </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvTimePost"
+        android:textSize="10dp"
+        android:textColor="@color/gray"
+        android:text=""/>
+
+    <!-- Spacing kecil -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp" />
+
+    <!-- Isi komentar -->
     <TextView
         android:id="@+id/tvCommentText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ini adalah isi komentar."/>
+        android:text="Ini adalah isi komentar."
+        android:textSize="14.5sp"
+        android:textColor="#222222"/>
+
+    <!-- Garis separator elegan -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_marginTop="12dp"
+        android:background="#E0E0E0" />
 
 </LinearLayout>
